@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { GameEngine } from 'react-native-game-engine'
 import { Dimensions } from 'react-native'
 import Player from './Player'
@@ -8,10 +8,15 @@ import Physics from '../systems/Physics'
 
 export default function Game () {
   const { width, height } = Dimensions.get('screen')
+  const [entities, setEntities] = useState({
+    1: player,
+    ...enemies
+  })
 
   const player = {
     position: [width / 2, height - 50],
-    renderer: Player,
+    size: [50, 50],
+    renderer: <Player />,
     update: (player, { touches, screen }) => {
       let move = [0, 0]
       touches
@@ -29,7 +34,7 @@ export default function Game () {
     return {
       position: [50 * i, 50],
       size: [50, 50],
-      renderer: Enemy,
+      renderer: <Enemy />,
       update: (enemy, { screen }) => {
         enemy.position[0] += 1
         if (enemy.position[0] > screen.width) {
@@ -85,7 +90,9 @@ export default function Game () {
         }}
       >
         {Object.values(entities).map(entity => {
-          return <entity.renderer key={Math.random()} {...entity} />
+          console.log(entity)
+          if (entity.renderer)
+            return <entity.renderer key={Math.random()} {...entity} />
         })}
       </GameEngine>
     </View>
